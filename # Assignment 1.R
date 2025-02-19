@@ -25,8 +25,10 @@ print(Dtrain$time)
 x <- Dtrain$year # # Extracts it as a numeric vector
 
 x11()
-plot(x,Dtrain$hydrogen)
+# plot(x,Dtrain$total)
 
+matplot(Dtrain$year, Dtrain$total, type = "l", lty = 1, 
+        xlab = "Year", ylab = "# Vehicles", main = "Total Number of Motor Driven Veichles Over Time")
 
 x11()  # Open a new plot window
 
@@ -41,17 +43,4 @@ matplot(x, y_data, type = "l", lty = 1, col = 1:ncol(y_data),
 # Add legend using column names
 legend("topright", legend = colnames(y_data), col = 1:ncol(y_data), lty = 1, cex = 0.8)
 
-x11()  # LOGPLOT
 
-# Define x and remove it from the dataframe to plot only numeric columns
-x <- Dtrain$year
-y_data <- Dtrain[, !names(Dtrain) %in% c("year","time", "total")]  # Remove some of the columns
-
-# Plot all columns against x
-matplot(x, y_data, log = "y", type = "l", lty = 1, col = 1:ncol(y_data), 
-        xlab = "Year", ylab = "# Vehicles", main = "Number of Motor Driven Veichles Over Time")
-
-# Add legend using column names
-legend("topright", legend = colnames(y_data), col = 1:ncol(y_data), lty = 1, cex = 0.8)
-
-print(1e+01)
