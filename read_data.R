@@ -6,7 +6,7 @@ D <- read.csv("DST_BIL54.csv")
 str(D)
 
 # See the help
-?strftime
+
 D$time <- as.POSIXct(paste0(D$time,"-01"), "%Y-%m-%d", tz="UTC")
 D$time
 class(D$time)
