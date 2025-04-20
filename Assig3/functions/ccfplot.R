@@ -7,10 +7,10 @@ ccfplot <- function(fit, data){
   }
   par(mfrow=c(1,3), mar=c(3,3,3,1), mgp=c(2, 0.7,0))
   (i <- as.integer(names(fit$residuals)))
-  ccf(fit$residuals[i], X$Pinner[i], na.action=na.pass, main="", xlim=c(0,20))
-  title(main="CCF(residuals,Pinner)", line=0.2)
-  ccf(fit$residuals[i], X$Touter[i], na.action=na.pass, main="", xlim=c(0,20))
-  title(main="CCF(residuals,Touter)", line=0.2)
-  ccf(fit$residuals[i], X$Ta[i], na.action=na.pass, main="", xlim=c(0,20))
-  title(main="CCF(residuals,Ta)", line=0.2)
+  ccf(fit$residuals[i], D$Pv[i], na.action=na.pass, main="", xlim=c(0,20))
+  title(main="CCF(residuals,Pv)", line=0.2)
+  ccf(fit$residuals[i], D$Gv[i], na.action=na.pass, main="", xlim=c(0,20))
+  title(main="CCF(residuals,Gv)", line=0.2)
+  ccf(fit$residuals[i], D$Tdelta[i], na.action=na.pass, main="", xlim=c(0,20))
+  title(main="CCF(residuals,Tdelta)", line=0.2)
 }
