@@ -1,4 +1,4 @@
-myKalmanFilter <- function(
+oiaKalmanFilter <- function(
   y,             # Vector of observations y_t
   theta,       # Model parameters for X_{t+1} = b + a*X_t + c*e_t
   R,             # Measurement noise variance
@@ -28,10 +28,14 @@ myKalmanFilter <- function(
     
     # the update step
     innovation[t] <- y[t] - x_pred[t] # the prediction error
-    innovation_var[t] <- P_pred[t] # the prediction error variance # sus - equal to variance of the prediction?
-    K_t <- P_pred[t]*(P_pred + R)^(-1)# the Kalman gain 
-    x_filt[t] <- x_pred[t] + K_t*(innovation[t]) # the filtered estimate
-    P_filt[t] <- P_pred[t] - K_t[t]*P_pred[t]# the filtered estimate variance # sigma^xx_t|t
+    #print("y[t]")
+    #print(y[t])
+    innovation_var[t] <- P_pred[t]+ R # the prediction error variance # sus - this is sigma^yy_t+t|t
+    K_t <- P_pred[t]/innovation_var[t]# the Kalman gain 
+    #print(K_t)
+
+    x_filt[t] <- x_pred[t] + K_t*innovation[t] # the filtered estimate
+    P_filt[t] <- P_pred[t] - K_t*P_pred[t]   # the filtered estimate variance # sigma^xx_t|t
   }
   
   return(list(
