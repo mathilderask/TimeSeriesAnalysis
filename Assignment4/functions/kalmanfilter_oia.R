@@ -30,7 +30,7 @@ oiaKalmanFilter <- function(
     innovation[t] <- y[t] - x_pred[t] # the prediction error
     #print("y[t]")
     #print(y[t])
-    innovation_var[t] <- P_pred[t]+ R # the prediction error variance # sus - this is sigma^yy_t+t|t
+    innovation_var[t] <- P_pred[t]+ R # the prediction error variance # this is sigma^yy_t+t|t
     K_t <- P_pred[t]/innovation_var[t]# the Kalman gain 
     #print(K_t)
 
