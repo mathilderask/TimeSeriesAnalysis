@@ -13,7 +13,7 @@ myKalmanFilter <- function(
   P_pred  <- numeric(N)  # Predicted variances
   x_filt  <- numeric(N)  # Filtered means
   P_filt  <- numeric(N)  # Filtered variances
-  innovation     <- numeric(N)  # Pre-fit residuals: y[t] - x_pred[t]
+  innovation  <- numeric(N)  # Pre-fit residuals: y[t] - x_pred[t]
   innovation_var <- numeric(N)  # Innovation covariance: P_pred[t] + R
   
   for (t in seq_len(N)) {
@@ -25,14 +25,15 @@ myKalmanFilter <- function(
       x_pred[t] <- a * x_filt[t-1] + b # the mean prediction using the previous filtered estimate
       P_pred[t] <- a * P_filt[t-1] * a + sigma1 # the variance prediction using the previous filtered estimate
     }
+
     # the update step
     innovation[t] <- y[t] - x_pred[t]# the prediction error
-    innovation_var[t] <- P_pred[t] # the prediction error variance
-    K_t <- innovation_var[t] * (P_pred+R)^(-1)# the Kalman gain
-    x_filt[t] <- x_pred[t] + K_t*innovation[t] # the filtered estimate
-    P_filt[t] <- P_pred[t] - K_t*P_pred[t]# the filtered estimate variance
+    innovation_var[t] <- P_pred[t] + R # the prediction error variance
+    K_t <- P_pred[t]/innovation_var[t]# the Kalman gain
+    x_filt[t] <- x_pred[t] + K_t * innovation[t] # the filtered estimate
+    P_filt[t] <- P_pred[t] - K_t * P_pred[t]# the filtered estimate variance
   }
-  
+
   return(list(
     x_pred = x_pred,
     P_pred = P_pred,

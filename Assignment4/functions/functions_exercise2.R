@@ -42,7 +42,7 @@ kf_logLik_dt <- function(par, df) {
     # update step
     K_t    <- # Kalman gain
     x_est  <- # reconstructed state
-    P_est  <-1 # reconstructed covariance
+    P_est  <- 1 # reconstructed covariance
   }
 
   as.numeric(logLik)
