@@ -33,7 +33,6 @@ myKalmanFilter <- function(
     x_filt[t] <- x_pred[t] + K_t * innovation[t] # the filtered estimate
     P_filt[t] <- P_pred[t] - K_t * P_pred[t]# the filtered estimate variance
   }
-
   return(list(
     x_pred = x_pred,
     P_pred = P_pred,
