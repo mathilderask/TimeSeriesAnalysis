@@ -2,8 +2,8 @@ oiaKalmanFilter <- function(
   y,             # Vector of observations y_t
   theta,       # Model parameters for X_{t+1} = b + a*X_t + c*e_t
   R,             # Measurement noise variance
-  x_prior = 0,   # Initial prior mean for X_0
-  P_prior = 10   # Initial prior variance for X_0
+  x_prior ,   # Initial prior mean for X_0
+  P_prior   # Initial prior variance for X_0
 ) {
   a <- theta[2]
   b <- theta[1]
@@ -20,7 +20,7 @@ oiaKalmanFilter <- function(
     # the prediction step
     if (t == 1) {
       x_pred[t] <- a*x_prior + b        # the mean prediction using the prior
-      P_pred[t] <- a*P_prior*a + sigma1 # the variance prediction using the prior
+      P_pred[t] <- a*P_prior*a + sigma1 # the variance prediction using the prior #s
     } else {
       x_pred[t] <- a*x_filt[t-1] + b   # the mean prediction using the previous filtered estimate
       P_pred[t] <- a*P_filt[t-1]*a + sigma1   # the variance prediction using the previous filtered estimate
