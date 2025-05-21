@@ -1,3 +1,5 @@
+#--------------- 1-dimensional Kalman filter ---------------#
+
 kf_logLik_dt1d <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
@@ -47,6 +49,7 @@ kf_logLik_dt1d <- function(par, df) {
   as.numeric(logLik)
 }
 
+
 # Optimizer wrapper
 estimate_dt1d <- function(start_par, df, lower=NULL, upper=NULL) {
   negLL <- function(par){ -kf_logLik_dt1d(par, df) }
@@ -57,6 +60,12 @@ estimate_dt1d <- function(start_par, df, lower=NULL, upper=NULL) {
     control= list(maxit=1000, trace=1)
   )
 }
+
+
+
+#--------------- 2-dimensional Kalman filter ---------------#
+
+
 kf_logLik_dt <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
