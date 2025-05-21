@@ -6,9 +6,9 @@ kf_logLik_dt <- function(par, df) {
   B   <- t(matrix(par[5:8],nrow = 2,ncol = 2)) # input matrix
   Sigma1lt <- t(matrix(par[9],0,par[10:11],nrow = 2, ncol = 2)) # lower-triangle of system covariance matrix
   Sigma1   <- Sigma1lt %*% t(Sigma1lt) # THAT IS!!! The system covariance matrix is given by Qlt %*% t(Qlt) (and is this symmetric positive definite)
-  C   <- matrix(C1,C2) # observation matrix
+  C   <- matrix(par[14],par[15]) # observation matrix
   Sigma2 <- par[16] # observation noise covariance matrix
-  X0  <- matrix(X0) # initial state
+  X0  <- matrix(Par[17],par[18]) # initial state
 
   # Variables
   obs_cols <- c("Y") # observation column names
