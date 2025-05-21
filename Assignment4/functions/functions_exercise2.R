@@ -1,3 +1,62 @@
+kf_logLik_dt1d <- function(par, df) {
+  # par: vector of parameters
+  # df: data frame with observations and inputs as columns (Y, Ta, S, I)
+  # par: Could be on the form c(A B1, B2,B3, Q,C,sigma2,X0)
+  A   <- par[1] # transition matrix
+  B   <- c(B1,B2,B3) # input matrix
+  Sigma1lt <- par[5] # lower-triangle of system covariance matrix
+  Sigma1   <- Sigma1lt^2 # THAT IS!!! The system covariance matrix is given by Qlt %*% t(Qlt) (and is this symmetric positive definite)
+  C   <- par[6] # observation matrix
+  Sigma2 <- par[7] # observation noise covariance matrix
+  X0  <- par[8] # initial state
+
+  # Variables
+  obs_cols <- c("Y") # observation column names
+  input_cols <- c("Ta","S","I") # input column names
+
+  # pull out data
+  Y  <- as.matrix(df[, obs_cols])     # m×T
+  U  <- as.matrix(df[, input_cols])   # p×T
+  Tn <- nrow(df)
+
+  # init
+  n      <- nrow(A)
+  x_est <- X0
+  P_est  <- diag(1e1, n)                   # X0 prior covariance
+  logLik <- 0
+
+  for (t in 1:Tn) {
+    # prediction step
+    x_pred <- A * x_est + B %*% U[t,] # write the prediction step
+    P_pred <- A^2 * P_est + Sigma1 # write the prediction step (Sigma_xx)
+
+    # innovation step
+    y_pred  <- C * x_pred # predicted observation
+    S_t     <- C^2 * P_pred + Sigma2 # predicted observation covariance (Sigma_yy)
+    innov   <- Y[t] - y_pred # innovation (one-step prediction error)
+
+    # log-likelihood contribution
+    logLik <- logLik - 0.5 * ( log(S_t) + innov^2 / P_est)
+
+    # update step
+    K_t    <- P_pred * C / S_t # Kalman gain
+    x_est  <- x_pred + K_t * innov # reconstructed state
+    P_est  <- P_pred - K_t * C * P_pred # reconstructed covariance
+  }
+
+  as.numeric(logLik)
+}
+
+# Optimizer wrapper
+estimate_dt1d <- function(start_par, df, lower=NULL, upper=NULL) {
+  negLL <- function(par){ -kf_logLik_dt1d(par, df) }
+  optim(
+    par    = start_par, fn = negLL,
+    method = "L-BFGS-B",
+    lower  = lower, upper = upper,
+    control= list(maxit=1000, trace=1)
+  )
+}
 kf_logLik_dt <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
@@ -6,9 +65,9 @@ kf_logLik_dt <- function(par, df) {
   B   <- t(matrix(par[5:8],nrow = 2,ncol = 2)) # input matrix
   Sigma1lt <- t(matrix(par[9],0,par[10:11],nrow = 2, ncol = 2)) # lower-triangle of system covariance matrix
   Sigma1   <- Sigma1lt %*% t(Sigma1lt) # THAT IS!!! The system covariance matrix is given by Qlt %*% t(Qlt) (and is this symmetric positive definite)
-  C   <- matrix(C1,C2) # observation matrix
+  C   <- matrix(par[14],par[15]) # observation matrix
   Sigma2 <- par[16] # observation noise covariance matrix
-  X0  <- matrix(X0) # initial state
+  X0  <- matrix(Par[17],par[18]) # initial state
 
   # Variables
   obs_cols <- c("Y") # observation column names
@@ -22,7 +81,7 @@ kf_logLik_dt <- function(par, df) {
   # init
   n      <- nrow(A)
   x_est  <- matrix(Y[1,], n, 1)            # start state from first obs
-  x_est[1] <- X0 
+  x_est <- matrix(Par[17],par[18],n,1)
   P_est  <- diag(1e1, n)                   # X0 prior covariance
   logLik <- 0
 
@@ -58,6 +117,8 @@ estimate_dt <- function(start_par, df, lower=NULL, upper=NULL) {
     control= list(maxit=1000, trace=1)
   )
 }
+
+
 
 
 
