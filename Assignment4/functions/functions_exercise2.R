@@ -1,7 +1,9 @@
+#--------------- 1-dimensional Kalman filter ---------------#
+
 kf_logLik_dt1d <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
-  # par: Could be on the form c(A,B1, B2,B3, Q,C,sigma2,X0)
+  # par: Could be on the form c(A, B1, B2, B3, Q, C, sigma2, X0)
   A   <- par[1] # transition matrix
   B   <- c(par[2],par[3],par[4]) # input matrix
   Sigma1lt <- par[5] # lower-triangle of system covariance matrix
@@ -36,16 +38,16 @@ kf_logLik_dt1d <- function(par, df) {
     innov   <- Y[t] - y_pred # innovation (one-step prediction error)
 
     # log-likelihood contribution
-    logLik <- logLik - 0.5 * ( log(S_t) + innov^2 / P_est)
+    logLik <- logLik - 0.5 * (log(S_t) + innov^2 / S_t)
 
     # update step
     K_t    <- P_pred * C / S_t # Kalman gain
     x_est  <- x_pred + K_t * innov # reconstructed state
     P_est  <- P_pred - K_t * C * P_pred # reconstructed covariance
   }
-
   as.numeric(logLik)
 }
+
 
 # Optimizer wrapper
 estimate_dt1d <- function(start_par, df, lower=NULL, upper=NULL) {
@@ -57,6 +59,12 @@ estimate_dt1d <- function(start_par, df, lower=NULL, upper=NULL) {
     control= list(maxit=1000, trace=1)
   )
 }
+
+
+
+#--------------- 2-dimensional Kalman filter ---------------#
+
+
 kf_logLik_dt <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
