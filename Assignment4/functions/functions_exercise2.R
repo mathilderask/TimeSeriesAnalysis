@@ -28,21 +28,21 @@ kf_logLik_dt <- function(par, df) {
 
   for (t in 1:Tn) {
     # prediction step
-    x_pred <- A%*%x_est[t]+ B%*%U[t]# write the prediction step
-    P_pred <- A%*%P_est%*%t(A)+sigma1 # write the prediction step (Sigma_xx)
+    x_pred <- A %*% x_est[t] + B %*% U[t] # write the prediction step
+    P_pred <- A %*% P_est %*% t(A) + Sigma1 # write the prediction step (Sigma_xx)
 
     # innovation step
-    y_pred  <- C%*%x_pred # predicted observation
-    S_t     <- C%*%P_pred%*%t(C)+ Sigma2# predicted observation covariance (Sigma_yy)
-    innov   <- Y[t]-y_pred# innovation (one-step prediction error)
+    y_pred  <- C %*% x_pred # predicted observation
+    S_t     <- C %*% P_pred %*% t(C) + Sigma2 # predicted observation covariance (Sigma_yy)
+    innov   <- Y[t] - y_pred # innovation (one-step prediction error)
 
     # log-likelihood contribution
     logLik <- logLik - 0.5*(sum(log(2*pi*S_t)) + t(innov) %*% solve(S_t, innov))
 
     # update step
-    K_t    <- P_pred%*%t(C)%*%solve(S_t)# Kalman gain
-    x_est[t+1]  <- x_pred+K_t*innov # reconstructed state
-    P_est  <- P_pred-K_t%*%C%*%P_pred # reconstructed covariance
+    K_t    <- P_pred %*% t(C) %*% solve(S_t)# Kalman gain
+    x_est[t+1]  <- x_pred + K_t * innov # reconstructed state
+    P_est  <- P_pred - K_t %*% C %*% P_pred # reconstructed covariance
   }
 
   as.numeric(logLik)
