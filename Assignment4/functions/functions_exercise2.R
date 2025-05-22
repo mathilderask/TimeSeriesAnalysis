@@ -4,12 +4,13 @@ kf_logLik_dt1d <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
   # par: Could be on the form c(A, B1, B2, B3, Q, C, sigma2)
+    # par: Could be on the form c(A11, A12, A21, A22, B11, B12,B13 , B21, B22,B23, Q11, Q12, Q22,C1,C2,sigma2)
   A   <- par[1] # transition matrix
-  B   <- c(par[2],par[3],par[4]) # input matrix
-  Sigma1lt <- par[5] # lower-triangle of system covariance matrix
+  B   <- c(par[5],par[6],par[7]) # input matrix
+  Sigma1lt <- par[11] # lower-triangle of system covariance matrix
   Sigma1   <- Sigma1lt^2 # THAT IS!!! The system covariance matrix is given by Qlt %*% t(Qlt) (and is this symmetric positive definite)
-  C   <- par[6] # observation matrix
-  Sigma2 <- par[7] # observation noise covariance matrix
+  C   <- par[14] # observation matrix
+  Sigma2 <- par[16] # observation noise covariance matrix
   X0  <- 20 # initial state
 
   # Variables
@@ -92,7 +93,8 @@ kf_logLik_dt <- function(par, df) {
   x_est[1, ] <- X0
   P_est[, , 1] <- P0
   logLik <- 0
-  yy<- c(rep(0,Tn))
+  yy <- c(rep(0,Tn))
+  xx <- matrix(0,ncol = 2,nrow = Tn)
   for (t in 1:Tn) {
     # Prediction
     x_pred <- as.vector(A %*% x_est[t, ] + B %*% U[t, ])
@@ -111,6 +113,7 @@ kf_logLik_dt <- function(par, df) {
     x_est[t + 1, ] <- x_pred + K_t * as.numeric(innov)
     P_est[,,t + 1] <- P_pred - K_t %*% C %*% P_pred
     yy[t] <- y_pred
+
   }
   
   as.numeric(logLik)
