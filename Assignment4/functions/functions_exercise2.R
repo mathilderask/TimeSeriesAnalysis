@@ -47,8 +47,8 @@ kf_logLik_dt1d <- function(par, df) {
     yy[t] <- y_pred
   }
   
-  #as.numeric(logLik)
-  return(yy)
+  as.numeric(logLik)
+  #return(yy)
 }
 
 
@@ -76,7 +76,7 @@ kf_logLik_dt <- function(par, df) {
   Qlt <- matrix(c(par[11], 0, par[12], par[13]), nrow = 2, byrow = TRUE) # 2x2 lower triangular
   Q <- Qlt %*% t(Qlt)
   C <- matrix(par[14:15], nrow = 1, ncol = 2) # 1x2 for observation
-  R <- par[16] # observation noise variance (scalar)
+  Sigma2 <- par[16] # observation noise variance (scalar)
 
   X0 <- c(20, 20)
   P0 <- diag(10, 2)
@@ -92,7 +92,7 @@ kf_logLik_dt <- function(par, df) {
   x_est[1, ] <- X0
   P_est[, , 1] <- P0
   logLik <- 0
-  
+  yy<- c(rep(0,Tn))
   for (t in 1:Tn) {
     # Prediction
     x_pred <- as.vector(A %*% x_est[t, ] + B %*% U[t, ])
@@ -100,19 +100,21 @@ kf_logLik_dt <- function(par, df) {
 
     # Observation prediction
     y_pred <- as.numeric(C %*% x_pred)
-    S_t <- C %*% P_pred %*% t(C) + R
+    S_t <- C %*% P_pred %*% t(C) + Sigma2
     innov <- Y[t] - y_pred
 
     # Log-likelihood
-    logLik <- logLik - 0.5 * (log(2 * pi * S_t) + (innov^2)/S_t)
+    logLik <- logLik - 0.5 * (log(S_t) + (innov^2)/S_t)
 
     # Update
     K_t <- P_pred %*% t(C) / as.numeric(S_t) # (2x2) * (2x1) / (1x1) = (2x1)
     x_est[t + 1, ] <- x_pred + K_t * as.numeric(innov)
     P_est[,,t + 1] <- P_pred - K_t %*% C %*% P_pred
+    yy[t] <- y_pred
   }
   
   as.numeric(logLik)
+  #return(yy)
 }
 
 estimate_dt <- function(start_par, df, lower=NULL, upper=NULL) {
