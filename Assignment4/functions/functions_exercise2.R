@@ -3,14 +3,14 @@
 kf_logLik_dt1d <- function(par, df) {
   # par: vector of parameters
   # df: data frame with observations and inputs as columns (Y, Ta, S, I)
-  # par: Could be on the form c(A, B1, B2, B3, Q, C, sigma2, X0)
+  # par: Could be on the form c(A, B1, B2, B3, Q, C, sigma2)
   A   <- par[1] # transition matrix
   B   <- c(par[2],par[3],par[4]) # input matrix
   Sigma1lt <- par[5] # lower-triangle of system covariance matrix
   Sigma1   <- Sigma1lt^2 # THAT IS!!! The system covariance matrix is given by Qlt %*% t(Qlt) (and is this symmetric positive definite)
   C   <- par[6] # observation matrix
   Sigma2 <- par[7] # observation noise covariance matrix
-  X0  <- par[8] # initial state
+  X0  <- 20 # initial state
 
   # Variables
   obs_cols <- c("Y") # observation column names
