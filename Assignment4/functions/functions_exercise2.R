@@ -24,9 +24,9 @@ kf_logLik_dt1d <- function(par, df) {
   # init
   n  <- 1
   x_est <- X0
-  P_est  <- diag(1e1, n)                   # X0 prior covariance
+  P_est  <- 10                 # X0 prior covariance
   logLik <- 0
-
+  yy <- c(rep(0,Tn))
   for (t in 1:Tn) {
     # prediction step
     x_pred <- A * x_est + B %*% U[t,] # write the prediction step
@@ -44,8 +44,11 @@ kf_logLik_dt1d <- function(par, df) {
     K_t    <- P_pred * C / S_t # Kalman gain
     x_est  <- x_pred + K_t * innov # reconstructed state
     P_est  <- P_pred - K_t * C * P_pred # reconstructed covariance
+    yy[t] <- y_pred
   }
-  as.numeric(logLik)
+  
+  #as.numeric(logLik)
+  return(yy)
 }
 
 
