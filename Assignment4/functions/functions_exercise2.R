@@ -94,7 +94,6 @@ kf_logLik_dt <- function(par, df) {
   P_est[, , 1] <- P0
   logLik <- 0
   yy <- c(rep(0,Tn))
-  xx <- matrix(0,ncol = 2,nrow = Tn)
   for (t in 1:Tn) {
     # Prediction
     x_pred <- as.vector(A %*% x_est[t, ] + B %*% U[t, ])
@@ -113,11 +112,10 @@ kf_logLik_dt <- function(par, df) {
     x_est[t + 1, ] <- x_pred + K_t * as.numeric(innov)
     P_est[,,t + 1] <- P_pred - K_t %*% C %*% P_pred
     yy[t] <- y_pred
-
   }
   
-  as.numeric(logLik)
-  #return(yy)
+  #as.numeric(logLik)
+  return(x_est)
 }
 
 estimate_dt <- function(start_par, df, lower=NULL, upper=NULL) {
