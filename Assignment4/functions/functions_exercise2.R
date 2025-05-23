@@ -48,8 +48,8 @@ kf_logLik_dt1d <- function(par, df) {
     yy[t] <- y_pred
   }
   
-  as.numeric(logLik)
-  #return(yy)
+  #as.numeric(logLik)
+  return(yy)
 }
 
 
