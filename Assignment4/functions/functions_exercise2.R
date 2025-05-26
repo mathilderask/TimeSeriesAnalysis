@@ -114,8 +114,8 @@ kf_logLik_dt <- function(par, df) {
     yy[t] <- y_pred
   }
   
-  return(as.numeric(logLik))
-  #return(yy)
+  #as.numeric(logLik)
+  return(x_est)
 }
 
 estimate_dt <- function(start_par, df, lower=NULL, upper=NULL) {
